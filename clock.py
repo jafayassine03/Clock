@@ -4,6 +4,9 @@ import os
 day = True
 show_seconds = True
 
+alarm_time = input("Set alarm (HH:MM) or press Enter to skip: ").strip()
+alarm_triggered = False
+
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -33,8 +36,7 @@ while True:
 
     print("       TERMINAL DIGITAL CLOCK")
     print("      ========================")
-    print("\n")
-
+    print()
     print(f"          {time_display}")
 
     current_hour = int(time.strftime("%H", now))
@@ -46,12 +48,26 @@ while True:
     else:
         greeting = "Good Evening"
 
-    print("\n")
+    print()
     print(f"         {greeting}")
-    print("\n")
+    print()
     print(f"     {date_display}")
 
-    print("\n")
+    if alarm_time:
+        print()
+        print(f"     Alarm: {alarm_time}")
+
+    current_time = time.strftime("%H:%M", now)
+
+    if alarm_time and current_time == alarm_time and not alarm_triggered:
+        print()
+        print("     ALARM! ALARM! ALARM!")
+        for _ in range(5):
+            print("\a", end="", flush=True)
+            time.sleep(0.5)
+        alarm_triggered = True
+
+    print()
     print(" Press CTRL + C to stop")
 
     time.sleep(1)
