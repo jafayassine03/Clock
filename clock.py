@@ -14,6 +14,15 @@ stopwatch_seconds = 0
 countdown_running = False
 countdown_seconds = 0
 
+world_cities = {
+    "1": ("UTC", 0),
+    "2": ("New York", -5),
+    "3": ("London", 0),
+    "4": ("Tokyo", 9),
+    "5": ("Sydney", 10)
+}
+selected_world_city = None
+
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -63,10 +72,10 @@ while True:
     if not day:
         time_display += f" {time.strftime('%p', now)}"
 
-    print("       TERMINAL DIGITAL CLOCK")
-    print("      ========================")
+    print("        TERMINAL DIGITAL CLOCK")
+    print("       ========================")
     print()
-    print(f"          {time_display}")
+    print(f"         {time_display}")
 
     current_hour = int(time.strftime("%H", now))
 
@@ -85,6 +94,14 @@ while True:
     if alarm_time:
         print()
         print(f"     Alarm: {alarm_time}")
+
+    if selected_world_city:
+        city_name, city_offset = selected_world_city
+        utc_now = time.gmtime()
+        city_epoch = time.mktime(utc_now) + (city_offset * 3600)
+        city_time = time.localtime(city_epoch)
+        city_time_str = time.strftime("%H:%M:%S", city_time)
+        print(f"     World Time ({city_name}): {city_time_str}")
 
     sw_h = stopwatch_seconds // 3600
     sw_m = (stopwatch_seconds % 3600) // 60
@@ -111,7 +128,7 @@ while True:
 
     print()
     print("T=12/24H  S=SECONDS  W=STOPWATCH")
-    print("C=COUNTDOWN  Q=QUIT")
+    print("C=COUNTDOWN  Z=WORLD TIME  Q=QUIT")
 
     if os.name == "nt":
         import msvcrt
@@ -136,6 +153,14 @@ while True:
                         countdown_running = True
                     except:
                         pass
+
+                elif key == "z":
+                    print("\nSelect City:")
+                    for k, v in world_cities.items():
+                        print(f"{k}) {v[0]}")
+                    choice = input("Choice: ").strip()
+                    if choice in world_cities:
+                        selected_world_city = world_cities[choice]
 
                 elif key == "q":
                     raise KeyboardInterrupt
