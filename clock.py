@@ -1,6 +1,7 @@
 import time
 import os
 import threading
+import random
 
 day = True
 show_seconds = True
@@ -125,6 +126,10 @@ while True:
             print("\a", end="", flush=True)
             time.sleep(0.5)
         alarm_triggered = True
+
+    temp_celsius = round(random.uniform(25.0, 35.0), 1)
+    print()
+    print(f"     Temperature: {temp_celsius}°C")
 
     print()
     print("T=12/24H  S=SECONDS  W=STOPWATCH")
