@@ -24,6 +24,14 @@ world_cities = {
 }
 selected_world_city = None
 
+quotes = [
+    "Keep pushing forward 🚀",
+    "Time waits for no one ⏳",
+    "Stay positive, work hard 💪",
+    "Dream big, achieve more 🌟",
+    "Every second counts ⌛"
+]
+
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -131,6 +139,10 @@ while True:
     print()
     print(f"     Temperature: {temp_celsius}°C")
 
+    quote = random.choice(quotes)
+    print()
+    print(f"     Quote: {quote}")
+
     print()
     print("T=12/24H  S=SECONDS  W=STOPWATCH")
     print("C=COUNTDOWN  Z=WORLD TIME  Q=QUIT")
@@ -173,3 +185,4 @@ while True:
             time.sleep(0.05)
     else:
         time.sleep(1)
+s
