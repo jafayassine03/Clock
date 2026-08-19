@@ -11,6 +11,7 @@ alarm_triggered = False
 
 stopwatch_running = False
 stopwatch_seconds = 0
+lap_times = []
 
 countdown_running = False
 countdown_seconds = 0
@@ -119,70 +120,14 @@ while True:
     print()
     print(f"     Stopwatch: {sw_h:02}:{sw_m:02}:{sw_s:02}")
 
+    if lap_times:
+        print("     Laps:")
+        for idx, lap in enumerate(lap_times, 1):
+            lh = lap // 3600
+            lm = (lap % 3600) // 60
+            ls = lap % 60
+            print(f"       Lap {idx}: {lh:02}:{lm:02}:{ls:02}")
+
     cd_h = countdown_seconds // 3600
     cd_m = (countdown_seconds % 3600) // 60
-    cd_s = countdown_seconds % 60
-
-    print(f"     Countdown: {cd_h:02}:{cd_m:02}:{cd_s:02}")
-
-    current_time = time.strftime("%H:%M", now)
-
-    if alarm_time and current_time == alarm_time and not alarm_triggered:
-        print()
-        print("     ALARM! ALARM! ALARM!")
-        for _ in range(5):
-            print("\a", end="", flush=True)
-            time.sleep(0.5)
-        alarm_triggered = True
-
-    temp_celsius = round(random.uniform(25.0, 35.0), 1)
-    print()
-    print(f"     Temperature: {temp_celsius}°C")
-
-    quote = random.choice(quotes)
-    print()
-    print(f"     Quote: {quote}")
-
-    print()
-    print("T=12/24H  S=SECONDS  W=STOPWATCH")
-    print("C=COUNTDOWN  Z=WORLD TIME  Q=QUIT")
-
-    if os.name == "nt":
-        import msvcrt
-
-        start = time.time()
-        while time.time() - start < 1:
-            if msvcrt.kbhit():
-                key = msvcrt.getch().decode(errors="ignore").lower()
-
-                if key == "t":
-                    day = not day
-
-                elif key == "s":
-                    show_seconds = not show_seconds
-
-                elif key == "w":
-                    stopwatch_running = not stopwatch_running
-
-                elif key == "c":
-                    try:
-                        countdown_seconds = int(input("\nSeconds: "))
-                        countdown_running = True
-                    except:
-                        pass
-
-                elif key == "z":
-                    print("\nSelect City:")
-                    for k, v in world_cities.items():
-                        print(f"{k}) {v[0]}")
-                    choice = input("Choice: ").strip()
-                    if choice in world_cities:
-                        selected_world_city = world_cities[choice]
-
-                elif key == "q":
-                    raise KeyboardInterrupt
-
-            time.sleep(0.05)
-    else:
-        time.sleep(1)
-s
+    cd_s
