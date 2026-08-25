@@ -15,6 +15,7 @@ lap_times = []
 
 countdown_running = False
 countdown_seconds = 0
+countdown_alarm_enabled = True
 
 world_cities = {
     "1": ("UTC", 0),
@@ -44,15 +45,16 @@ def stopwatch():
         time.sleep(1)
 
 def countdown():
-    global countdown_seconds, countdown_running
+    global countdown_seconds, countdown_running, countdown_alarm_enabled
     while True:
         if countdown_running and countdown_seconds > 0:
             countdown_seconds -= 1
             if countdown_seconds == 0:
                 print("\nCOUNTDOWN FINISHED!")
-                for _ in range(5):
-                    print("\a", end="", flush=True)
-                    time.sleep(0.5)
+                if countdown_alarm_enabled:
+                    for _ in range(5):
+                        print("\a", end="", flush=True)
+                        time.sleep(0.5)
                 countdown_running = False
         time.sleep(1)
 
@@ -130,4 +132,67 @@ while True:
 
     cd_h = countdown_seconds // 3600
     cd_m = (countdown_seconds % 3600) // 60
-    cd_s
+    cd_s = countdown_seconds % 60
+
+    print(f"     Countdown: {cd_h:02}:{cd_m:02}:{cd_s:02}")
+    print(f"     Alarm Sound: {'ON' if countdown_alarm_enabled else 'OFF'}")
+
+    current_time = time.strftime("%H:%M", now)
+
+    if alarm_time and current_time == alarm_time and not alarm_triggered:
+        print()
+        print("     ALARM! ALARM! ALARM!")
+        for _ in range(5):
+            print("\a", end="", flush=True)
+            time.sleep(0.5)
+        alarm_triggered = True
+
+    temp_celsius = round(random.uniform(25.0, 35.0), 1)
+    print()
+    print(f"     Temperature: {temp_celsius}°C")
+
+    quote = random.choice(quotes)
+    print()
+    print(f"     Quote: {quote}")
+
+    print()
+    print("T=12/24H  S=SECONDS  W=STOPWATCH  L=LAP")
+    print("C=COUNTDOWN  Z=WORLD TIME  A=TOGGLE ALARM SOUND  Q=QUIT")
+
+    if os.name == "nt":
+        import msvcrt
+
+        start = time.time()
+        while time.time() - start < 1:
+            if msvcrt.kbhit():
+                key = msvcrt.getch().decode(errors="ignore").lower()
+
+                if key == "t":
+                    day = not day
+                elif key == "s":
+                    show_seconds = not show_seconds
+                elif key == "w":
+                    stopwatch_running = not stopwatch_running
+                elif key == "l":
+                    if stopwatch_running:
+                        lap_times.append(stopwatch_seconds)
+                elif key == "c":
+                    try:
+                        countdown_seconds = int(input("\nSeconds: "))
+                        countdown_running = True
+                    except:
+                        pass
+                elif key == "z":
+                    print("\nSelect City:")
+                    for k, v in world_cities.items():
+                        print(f"{k}) {v[0]}")
+                    choice = input("Choice: ").strip()
+                    if choice in world_cities:
+                        selected_world_city = world_cities[choice]
+                elif key == "a":
+                    countdown_alarm_enabled = not countdown_alarm_enabled
+                elif key == "q":
+                    raise KeyboardInterrupt
+            time.sleep(0.05)
+    else:
+        time.sleep(1)
