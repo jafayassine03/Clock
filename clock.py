@@ -16,6 +16,7 @@ lap_times = []
 countdown_running = False
 countdown_seconds = 0
 countdown_alarm_enabled = True
+countdown_paused = False
 
 world_cities = {
     "1": ("UTC", 0),
@@ -45,9 +46,9 @@ def stopwatch():
         time.sleep(1)
 
 def countdown():
-    global countdown_seconds, countdown_running, countdown_alarm_enabled
+    global countdown_seconds, countdown_running, countdown_alarm_enabled, countdown_paused
     while True:
-        if countdown_running and countdown_seconds > 0:
+        if countdown_running and countdown_seconds > 0 and not countdown_paused:
             countdown_seconds -= 1
             if countdown_seconds == 0:
                 print("\nCOUNTDOWN FINISHED!")
@@ -136,6 +137,7 @@ while True:
 
     print(f"     Countdown: {cd_h:02}:{cd_m:02}:{cd_s:02}")
     print(f"     Alarm Sound: {'ON' if countdown_alarm_enabled else 'OFF'}")
+    print(f"     Countdown Paused: {'YES' if countdown_paused else 'NO'}")
 
     current_time = time.strftime("%H:%M", now)
 
@@ -157,7 +159,7 @@ while True:
 
     print()
     print("T=12/24H  S=SECONDS  W=STOPWATCH  L=LAP")
-    print("C=COUNTDOWN  Z=WORLD TIME  A=TOGGLE ALARM SOUND  Q=QUIT")
+    print("C=COUNTDOWN  Z=WORLD TIME  A=TOGGLE ALARM SOUND  P=PAUSE/RESUME COUNTDOWN  Q=QUIT")
 
     if os.name == "nt":
         import msvcrt
@@ -180,6 +182,7 @@ while True:
                     try:
                         countdown_seconds = int(input("\nSeconds: "))
                         countdown_running = True
+                        countdown_paused = False
                     except:
                         pass
                 elif key == "z":
@@ -191,6 +194,9 @@ while True:
                         selected_world_city = world_cities[choice]
                 elif key == "a":
                     countdown_alarm_enabled = not countdown_alarm_enabled
+                elif key == "p":
+                    if countdown_running:
+                        countdown_paused = not countdown_paused
                 elif key == "q":
                     raise KeyboardInterrupt
             time.sleep(0.05)
