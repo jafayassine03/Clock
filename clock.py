@@ -159,7 +159,7 @@ while True:
 
     print()
     print("T=12/24H  S=SECONDS  W=STOPWATCH  L=LAP")
-    print("C=COUNTDOWN  Z=WORLD TIME  A=TOGGLE ALARM SOUND  P=PAUSE/RESUME COUNTDOWN  Q=QUIT")
+    print("C=COUNTDOWN  Z=WORLD TIME  A=TOGGLE ALARM SOUND  P=PAUSE/RESUME COUNTDOWN  R=RESET STOPWATCH  Q=QUIT")
 
     if os.name == "nt":
         import msvcrt
@@ -197,6 +197,9 @@ while True:
                 elif key == "p":
                     if countdown_running:
                         countdown_paused = not countdown_paused
+                elif key == "r":
+                    stopwatch_seconds = 0
+                    lap_times.clear()
                 elif key == "q":
                     raise KeyboardInterrupt
             time.sleep(0.05)
