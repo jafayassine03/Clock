@@ -5,6 +5,7 @@ import random
 
 day = True
 show_seconds = True
+dark_mode = False
 
 alarm_time = input("Set alarm (HH:MM) or press Enter to skip: ").strip()
 alarm_triggered = False
@@ -85,6 +86,11 @@ while True:
     if not day:
         time_display += f" {time.strftime('%p', now)}"
 
+    if dark_mode:
+        print("\033[97m\033[40m")  # White text on black background
+    else:
+        print("\033[30m\033[47m")  # Black text on white background
+
     print("        TERMINAL DIGITAL CLOCK")
     print("       ========================")
     print()
@@ -138,6 +144,7 @@ while True:
     print(f"     Countdown: {cd_h:02}:{cd_m:02}:{cd_s:02}")
     print(f"     Alarm Sound: {'ON' if countdown_alarm_enabled else 'OFF'}")
     print(f"     Countdown Paused: {'YES' if countdown_paused else 'NO'}")
+    print(f"     Dark Mode: {'ON' if dark_mode else 'OFF'}")
 
     current_time = time.strftime("%H:%M", now)
 
@@ -159,7 +166,7 @@ while True:
 
     print()
     print("T=12/24H  S=SECONDS  W=STOPWATCH  L=LAP")
-    print("C=COUNTDOWN  Z=WORLD TIME  A=TOGGLE ALARM SOUND  P=PAUSE/RESUME COUNTDOWN  R=RESET STOPWATCH  Q=QUIT")
+    print("C=COUNTDOWN  Z=WORLD TIME  A=TOGGLE ALARM SOUND  P=PAUSE/RESUME COUNTDOWN  R=RESET STOPWATCH  M=TOGGLE DARK MODE  Q=QUIT")
 
     if os.name == "nt":
         import msvcrt
@@ -200,6 +207,8 @@ while True:
                 elif key == "r":
                     stopwatch_seconds = 0
                     lap_times.clear()
+                elif key == "m":
+                    dark_mode = not dark_mode
                 elif key == "q":
                     raise KeyboardInterrupt
             time.sleep(0.05)
