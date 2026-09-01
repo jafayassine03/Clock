@@ -1,40 +1,18 @@
 import time
 import os
 import threading
-import random
 
 day = True
 show_seconds = True
-dark_mode = False
 
 alarm_time = input("Set alarm (HH:MM) or press Enter to skip: ").strip()
 alarm_triggered = False
 
 stopwatch_running = False
 stopwatch_seconds = 0
-lap_times = []
 
 countdown_running = False
 countdown_seconds = 0
-countdown_alarm_enabled = True
-countdown_paused = False
-
-world_cities = {
-    "1": ("UTC", 0),
-    "2": ("New York", -5),
-    "3": ("London", 0),
-    "4": ("Tokyo", 9),
-    "5": ("Sydney", 10)
-}
-selected_world_city = None
-
-quotes = [
-    "Keep pushing forward 🚀",
-    "Time waits for no one ⏳",
-    "Stay positive, work hard 💪",
-    "Dream big, achieve more 🌟",
-    "Every second counts ⌛"
-]
 
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
@@ -47,16 +25,15 @@ def stopwatch():
         time.sleep(1)
 
 def countdown():
-    global countdown_seconds, countdown_running, countdown_alarm_enabled, countdown_paused
+    global countdown_seconds, countdown_running
     while True:
-        if countdown_running and countdown_seconds > 0 and not countdown_paused:
+        if countdown_running and countdown_seconds > 0:
             countdown_seconds -= 1
             if countdown_seconds == 0:
                 print("\nCOUNTDOWN FINISHED!")
-                if countdown_alarm_enabled:
-                    for _ in range(5):
-                        print("\a", end="", flush=True)
-                        time.sleep(0.5)
+                for _ in range(5):
+                    print("\a", end="", flush=True)
+                    time.sleep(0.5)
                 countdown_running = False
         time.sleep(1)
 
@@ -86,15 +63,10 @@ while True:
     if not day:
         time_display += f" {time.strftime('%p', now)}"
 
-    if dark_mode:
-        print("\033[97m\033[40m")  # White text on black background
-    else:
-        print("\033[30m\033[47m")  # Black text on white background
-
-    print("        TERMINAL DIGITAL CLOCK")
-    print("       ========================")
+    print("       TERMINAL DIGITAL CLOCK")
+    print("      ========================")
     print()
-    print(f"         {time_display}")
+    print(f"          {time_display}")
 
     current_hour = int(time.strftime("%H", now))
 
@@ -114,14 +86,6 @@ while True:
         print()
         print(f"     Alarm: {alarm_time}")
 
-    if selected_world_city:
-        city_name, city_offset = selected_world_city
-        utc_now = time.gmtime()
-        city_epoch = time.mktime(utc_now) + (city_offset * 3600)
-        city_time = time.localtime(city_epoch)
-        city_time_str = time.strftime("%H:%M:%S", city_time)
-        print(f"     World Time ({city_name}): {city_time_str}")
-
     sw_h = stopwatch_seconds // 3600
     sw_m = (stopwatch_seconds % 3600) // 60
     sw_s = stopwatch_seconds % 60
@@ -129,22 +93,11 @@ while True:
     print()
     print(f"     Stopwatch: {sw_h:02}:{sw_m:02}:{sw_s:02}")
 
-    if lap_times:
-        print("     Laps:")
-        for idx, lap in enumerate(lap_times, 1):
-            lh = lap // 3600
-            lm = (lap % 3600) // 60
-            ls = lap % 60
-            print(f"       Lap {idx}: {lh:02}:{lm:02}:{ls:02}")
-
     cd_h = countdown_seconds // 3600
     cd_m = (countdown_seconds % 3600) // 60
     cd_s = countdown_seconds % 60
 
     print(f"     Countdown: {cd_h:02}:{cd_m:02}:{cd_s:02}")
-    print(f"     Alarm Sound: {'ON' if countdown_alarm_enabled else 'OFF'}")
-    print(f"     Countdown Paused: {'YES' if countdown_paused else 'NO'}")
-    print(f"     Dark Mode: {'ON' if dark_mode else 'OFF'}")
 
     current_time = time.strftime("%H:%M", now)
 
@@ -156,17 +109,9 @@ while True:
             time.sleep(0.5)
         alarm_triggered = True
 
-    temp_celsius = round(random.uniform(25.0, 35.0), 1)
     print()
-    print(f"     Temperature: {temp_celsius}°C")
-
-    quote = random.choice(quotes)
-    print()
-    print(f"     Quote: {quote}")
-
-    print()
-    print("T=12/24H  S=SECONDS  W=STOPWATCH  L=LAP")
-    print("C=COUNTDOWN  Z=WORLD TIME  A=TOGGLE ALARM SOUND  P=PAUSE/RESUME COUNTDOWN  R=RESET STOPWATCH  M=TOGGLE DARK MODE  Q=QUIT")
+    print("T=12/24H  S=SECONDS  W=STOPWATCH")
+    print("C=COUNTDOWN  Q=QUIT")
 
     if os.name == "nt":
         import msvcrt
@@ -178,39 +123,23 @@ while True:
 
                 if key == "t":
                     day = not day
+
                 elif key == "s":
                     show_seconds = not show_seconds
+
                 elif key == "w":
                     stopwatch_running = not stopwatch_running
-                elif key == "l":
-                    if stopwatch_running:
-                        lap_times.append(stopwatch_seconds)
+
                 elif key == "c":
                     try:
                         countdown_seconds = int(input("\nSeconds: "))
                         countdown_running = True
-                        countdown_paused = False
                     except:
                         pass
-                elif key == "z":
-                    print("\nSelect City:")
-                    for k, v in world_cities.items():
-                        print(f"{k}) {v[0]}")
-                    choice = input("Choice: ").strip()
-                    if choice in world_cities:
-                        selected_world_city = world_cities[choice]
-                elif key == "a":
-                    countdown_alarm_enabled = not countdown_alarm_enabled
-                elif key == "p":
-                    if countdown_running:
-                        countdown_paused = not countdown_paused
-                elif key == "r":
-                    stopwatch_seconds = 0
-                    lap_times.clear()
-                elif key == "m":
-                    dark_mode = not dark_mode
+
                 elif key == "q":
                     raise KeyboardInterrupt
+
             time.sleep(0.05)
     else:
         time.sleep(1)
