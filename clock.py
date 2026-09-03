@@ -10,6 +10,7 @@ alarm_triggered = False
 
 stopwatch_running = False
 stopwatch_seconds = 0
+lap_times = []
 
 countdown_running = False
 countdown_seconds = 0
@@ -93,6 +94,14 @@ while True:
     print()
     print(f"     Stopwatch: {sw_h:02}:{sw_m:02}:{sw_s:02}")
 
+    if lap_times:
+        print("     Laps:")
+        for idx, lap in enumerate(lap_times, 1):
+            lh = lap // 3600
+            lm = (lap % 3600) // 60
+            ls = lap % 60
+            print(f"       Lap {idx}: {lh:02}:{lm:02}:{ls:02}")
+
     cd_h = countdown_seconds // 3600
     cd_m = (countdown_seconds % 3600) // 60
     cd_s = countdown_seconds % 60
@@ -110,7 +119,7 @@ while True:
         alarm_triggered = True
 
     print()
-    print("T=12/24H  S=SECONDS  W=STOPWATCH")
+    print("T=12/24H  S=SECONDS  W=STOPWATCH  L=LAP")
     print("C=COUNTDOWN  Q=QUIT")
 
     if os.name == "nt":
@@ -123,23 +132,21 @@ while True:
 
                 if key == "t":
                     day = not day
-
                 elif key == "s":
                     show_seconds = not show_seconds
-
                 elif key == "w":
                     stopwatch_running = not stopwatch_running
-
+                elif key == "l":
+                    if stopwatch_running:
+                        lap_times.append(stopwatch_seconds)
                 elif key == "c":
                     try:
                         countdown_seconds = int(input("\nSeconds: "))
                         countdown_running = True
                     except:
                         pass
-
                 elif key == "q":
                     raise KeyboardInterrupt
-
             time.sleep(0.05)
     else:
         time.sleep(1)
